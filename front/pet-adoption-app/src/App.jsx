@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './components/Home';
-import PetDetails from './components/PetDetails';
-import AdopterForm from './components/AdopterForm';
-import Admin from './components/Admin';
+import Home from './components/Home.jsx';
+import PetDetails from './components/PetDetails.jsx';
+import AdopterForm from './components/AdopterForm.jsx';
+import Admin from './components/Admin.jsx';
 
 function App() {
   return (

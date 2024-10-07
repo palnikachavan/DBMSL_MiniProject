@@ -6,7 +6,7 @@ function Home() {
 
   useEffect(() => {
     // Fetch pets from the database (backend API)
-    fetch('/api/pets')
+    fetch('http://localhost:3001/api/pets')
       .then((response) => response.json())
       .then((data) => setPets(data));
   }, []);
