@@ -1,17 +1,40 @@
-import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 
 function PetDetails() {
-  const { id } = useParams();
+  const { id } = useParams();  // Get the pet ID from the URL
   const [pet, setPet] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);  // Track loading state
 
   useEffect(() => {
-    fetch(`/api/pets/${id}`)
-      .then((response) => response.json())
-      .then((data) => setPet(data));
+    // Fetch pet details from the backend API
+    fetch(`http://localhost:3001/api/pet/${id}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch pet details');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setPet(data);  // Set pet details
+        setLoading(false);  // Stop loading
+      })
+      .catch((error) => {
+        setError(error.message);  // Handle error
+        setLoading(false);  // Stop loading
+      });
   }, [id]);
 
-  if (!pet) return <p>Loading...</p>;
+  // Show loading state
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Handle errors
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
