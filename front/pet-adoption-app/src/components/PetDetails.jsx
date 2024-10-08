@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import "../index.css"
 
 function PetDetails() {
-  const { id } = useParams();  // Get the pet ID from the URL
+  const { id } = useParams(); // Fetches 'id' from the URL params
   const [pet, setPet] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);  // Track loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch pet details from the backend API
-    fetch(`http://localhost:3001/api/pet/${id}`)
+    fetch(`http://localhost:3001/api/pets/${id}`) // Make sure this URL matches your backend route
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch pet details');
@@ -17,42 +17,34 @@ function PetDetails() {
         return response.json();
       })
       .then((data) => {
-        setPet(data);  // Set pet details
-        setLoading(false);  // Stop loading
+        setPet(data);
+        setLoading(false);
       })
       .catch((error) => {
-        setError(error.message);  // Handle error
-        setLoading(false);  // Stop loading
+        setError(error.message);
+        setLoading(false);
       });
   }, [id]);
 
-  // Show loading state
   if (loading) {
-    return <div>Loading...</div>;
+    return <p>Loading pet details...</p>;
   }
 
-  // Handle errors
   if (error) {
-    return <div>Error: {error}</div>;
+    return <p>Error: {error}</p>;
   }
 
-  return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-4">{pet.name}</h1>
-      <p><strong>Species:</strong> {pet.species}</p>
-      <p><strong>Breed:</strong> {pet.breed}</p>
-      <p><strong>Age:</strong> {pet.age} years</p>
-      <p><strong>Weight:</strong> {pet.weight} kg</p>
-      <p><strong>Health Status:</strong> {pet.health_status}</p>
-      <p className="mb-4">{pet.description}</p>
-      {!pet.is_adopted ? (
-        <Link to={`/adopt/${pet.pet_id}`} className="bg-blue-500 text-white py-2 px-4 rounded">
-          Adopt Me!
-        </Link>
-      ) : (
-        <p className="text-green-600 font-semibold">Adopted</p>
-      )}
+  return pet ? (
+    <div className='center'>
+      <h1 className='text-3xl font-bold'>{pet.name}</h1>
+      <p className='pt-3'>Breed: {pet.breed}</p>
+      <p>Age: {pet.age}</p>
+      <p>Gender: {pet.gender}</p>
+      <p>Description: {pet.description}</p>
+      <p>Health Status: {pet.health_status}</p>
     </div>
+  ) : (
+    <p>No pet details found</p>
   );
 }
 
