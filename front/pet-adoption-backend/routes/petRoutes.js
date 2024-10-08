@@ -1,11 +1,49 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');  // Make sure you have your database connection here
+const db = require('../db');
 
-// Fetch all pets
-router.get('/', async (req, res) => {
+// Fetch all distinct species
+router.get('/species', async (req, res) => {
   try {
-    const [pets] = await db.query('SELECT * FROM Pets WHERE is_adopted=0');
+    const [species] = await db.query('SELECT DISTINCT species_name FROM Pets');
+    res.json(species);
+  } catch (error) {
+    console.error('Error fetching species:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Fetch all distinct breeds
+router.get('/breeds', async (req, res) => {
+  try {
+    const [breeds] = await db.query('SELECT DISTINCT breed FROM Pets');
+    res.json(breeds);
+  } catch (error) {
+    console.error('Error fetching breeds:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Fetch all available pets with optional filters
+router.get('/', async (req, res) => {
+  const { species, breed } = req.query;  // Get filters from query parameters
+
+  let query = 'SELECT * FROM Pets WHERE is_adopted = 0';
+  const params = [];
+
+  // Apply filters based on species and breed
+  if (species) {
+    query += ' AND species_name = ?';
+    params.push(species);
+  }
+
+  if (breed) {
+    query += ' AND breed = ?';
+    params.push(breed);
+  }
+
+  try {
+    const [pets] = await db.query(query, params);
     res.json(pets);
   } catch (error) {
     console.error('Error fetching pets:', error);
@@ -13,22 +51,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get pet by ID
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const [rows] = await db.query('SELECT * FROM Pets WHERE pet_id = ?', [id]); // Properly structured query
-    if (rows.length === 0) {
-      return res.status(404).json({ message: 'Pet not found' });
-    }
-    res.json(rows[0]);  // Return the first pet found
-  } catch (error) {
-    console.error('Error fetching pet details:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
 module.exports = router;
-
-// module.exports = router;

@@ -6,6 +6,7 @@ const cors = require('cors');
 const petRoutes = require('./routes/petRoutes');
 const adopterRoutes = require('./routes/adopterRoutes');
 
+
 // Middleware
 app.use(cors());
 app.use(express.json());  // For parsing JSON request bodies
