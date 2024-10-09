@@ -34,7 +34,7 @@ const AdoptionHistory = () => {
     }
 
     return (
-        <div className="w-full p-2 m-2">
+        <div className="w-full">
             <h1 className="text-3xl font-bold mb-4">Adoption History</h1>
             {adopters.length === 0 ? (
                 <p>No adoption history available.</p>

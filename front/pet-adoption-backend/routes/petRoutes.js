@@ -24,6 +24,22 @@ router.get('/breeds', async (req, res) => {
   }
 });
 
+// Get pet by ID
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [adopter] = await db.query('SELECT * FROM Pets WHERE pet_id = ?', [id]);
+    if (adopter.length === 0) {
+      return res.status(404).json({ message: 'Adopter not found' });
+    }
+    res.json(adopter[0]);
+  } catch (error) {
+    console.error('Error fetching adopter details:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Fetch all available pets with optional filters
 router.get('/', async (req, res) => {
   const { species, breed } = req.query;  // Get filters from query parameters
